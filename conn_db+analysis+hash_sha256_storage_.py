@@ -53,27 +53,32 @@ def analysis(text):
     print(emotion_index)
     print(get_emotion(emotion_index))
 
+    return emotion_index
+
 def main():
 
     import pymongo
 
     conn = pymongo.MongoClient()
     db = conn.test
-    handler = db.b
-    result=handler.find_one(skip=1)
+    handler = db.mt
 
-    #print(result)
+    #查询条件，主键
+    id = 6
 
-    text = result["text"]
+    result = handler.find({"_id":id})[0]
+    text = result["Data"]
 
     print(text)
 
-    analysis(text)
+    emo = analysis(text)
 
     import sys
     sys.path.append("D:\Python Projects/venv/")
     import sha256
-    c = sha256.s(text)
+    plaintext = str(emo)
+    ciphertext = sha256.s(plaintext)
+    analysis_result = text + ",分析结果值为 " + plaintext
 
     # import hashlib
     #
@@ -85,8 +90,10 @@ def main():
     # c = sha256.hexdigest()
     # # print("sha256加密结果:",s256)
 
-    handler = db.c
-    handler.insert_one({"hash":c})
+    handler = db.analysis_result_data_hash
+    handler.insert_one({"data":analysis_result,"hash":ciphertext})
+    print("分析结果哈希值插入成功！")
+
 
 
 
